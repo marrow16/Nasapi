@@ -34,4 +34,4 @@ java -jar Nasapi-0.1.jar myServers/test/main.js
 <br/>
 <br/>
 
-Working example - see [ServerTest](./serverTest/index.jsl)
+Working example - see [ServerTest](./serverTest/index.js)
