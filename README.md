@@ -31,3 +31,7 @@ To specify a specific start-up root Javascript file:-
 ```
 java -jar Nasapi-0.1.jar myServers/test/main.js
 ```
+<br/>
+<br/>
+
+Working example - see [ServerTest](./serverTest/index.jsl)
