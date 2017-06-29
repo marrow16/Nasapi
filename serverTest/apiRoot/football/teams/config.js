@@ -8,132 +8,159 @@ function EndpointConfig() {
 	var collectionName = 'teams';
 	var collection = mongo.getCollection(collectionName);
 	// initial check to see if there are any football teams populated in the mongo db collection...
-	if (collection.count() == 0) {
+	if (Number(collection.count()) === 0) {
 		require('./initialTeamsLoader');
 	}
-	// build list of fields that we'll pull back at each query...
-	var fields = {
-		'id': 1,
-		'name': 1,
-		'city': 1,
-		'owner': 1,
-		'league': 1,
-		'stadiumCapacity': 1,
-		'formationYear': 1,
-		'_id': 0
-	};
 	var baseProperties = {
 		'id': {
-			type: 'String',
+			type: 'string',
+			nullabe: false,
 			description: 'The id of the entity',
 			$collection: {
 				postable: false,
 				postMandatory: false,
-				sortable: true
+				sortable: true,
+				defaultListed: true
 			},
 			$entity: {
 				putable: false
 			}
 		},
 		'$ref': {
-			type: 'String',
+			type: 'string',
+			nullabe: false,
 			description: 'The URI of the entity',
 			$collection: {
 				postable: false,
 				postMandatory: false,
-				sortable: false
+				sortable: false,
+				defaultListed: true
+			},
+			$entity: {
+				putable: false
+			}
+		},
+		'etag': {
+			type: 'string',
+			nullabe: false,
+			description: 'The concurrency ETag of the entity',
+			$collection: {
+				postable: false,
+				postMandatory: false,
+				sortable: false,
+				defaultListed: false
 			},
 			$entity: {
 				putable: false
 			}
 		},
 		'name': {
-			type: 'String',
+			type: 'string',
+			nullabe: false,
 			description: 'The name of the team',
 			$collection: {
 				postable: true,
 				postMandatory: true,
-				sortable: true
+				sortable: true,
+				defaultListed: true
 			},
 			$entity: {
 				putable: true
 			}
 		},
 		'city': {
-			type: 'String',
+			type: 'string',
+			nullabe: true,
 			description: 'The city/town in which the team is based',
 			$collection: {
 				postable: true,
 				postMandatory: true,
-				sortable: true
+				sortable: true,
+				defaultListed: false
 			},
 			$entity: {
 				putable: true
 			}
 		},
 		'owner': {
-			type: 'String',
+			type: 'string',
+			nullabe: true,
 			description: 'The owner(s) of the team',
 			$collection: {
 				postable: true,
 				postMandatory: false,
-				sortable: true
+				sortable: true,
+				defaultListed: false
 			},
 			$entity: {
 				putable: true
 			}
 		},
 		'league': {
-			type: 'String',
+			type: 'string',
+			nullabe: true,
 			description: 'The league in which the team competes',
 			$collection: {
 				postable: true,
 				postMandatory: false,
-				sortable: true
+				sortable: true,
+				defaultListed: false
 			},
 			$entity: {
 				putable: true
 			}
 		},
 		'stadiumCapacity': {
-			type: 'Integer',
+			type: 'integer',
+			nullabe: true,
 			description: 'The capacity of the team\'s stadium',
 			$collection: {
 				postable: true,
 				postMandatory: false,
-				sortable: true
+				sortable: true,
+				defaultListed: false
 			},
 			$entity: {
 				putable: true
 			}
 		},
 		'formationYear': {
-			type: 'Integer',
+			type: 'integer',
+			nullabe: true,
 			description: 'The year tthe football club was formed',
 			$collection: {
 				postable: true,
 				postMandatory: false,
-				sortable: true
+				sortable: true,
+				defaultListed: false
 			},
 			$entity: {
 				putable: true
 			}
 		}
 	};
+	// build list of fields that we'll pull back at each query...
+	var fields = {
+		'_id': 0
+	};
 	var collectionPropertyOptions = {};
 	var entityPropertyOptions = {};
 	for (var pty in baseProperties) {
 		if (baseProperties.hasOwnProperty(pty)) {
+			fields[pty] = 1;
 			var propertyDef = baseProperties[pty];
 			collectionPropertyOptions[pty] = {
 				type: propertyDef.type,
+				nullable: propertyDef.nullabe,
 				description: propertyDef.description,
 				postable: propertyDef.$collection.postable,
 				postMandatory: propertyDef.$collection.postMandatory,
-				sortable: propertyDef.$collection.sortable
+				sortable: propertyDef.$collection.sortable,
+				defaultListed: propertyDef.$collection.defaultListed
 			};
 			entityPropertyOptions[pty] = {
 				type: propertyDef.type,
+				nullable: propertyDef.nullabe,
 				description: propertyDef.description,
 				putable: propertyDef.$entity.putable
 			};

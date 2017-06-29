@@ -11,7 +11,10 @@
 	});
 
 	function doGet(request, response) {
-		var cursor = config.collection.find(mongo.createBasicDBObject(), config.dbFields);
+		var fields = endpointUtils.getFieldsRequested(request.getQueryParameter("properties"), config.collectionPropertyOptions);
+		var finds = endpointUtils.getFilteringRequested(request.getQueryParameters(), config.collectionPropertyOptions);
+//		var cursor = config.collection.find(mongo.createBasicDBObject(), fields);
+		var cursor = config.collection.find(finds, fields);
 		// build any sorting from query 'sort' params...
 		var sortObj = endpointUtils.getDBSortObjectFromQueryParams(request.getQueryParameter("sort"),  config.collectionPropertyOptions);
 		if (sortObj !== null) {
@@ -40,9 +43,23 @@
 		} catch (e) {
 			throw new com.adeptions.exceptions.BadRequestException("Invalid JSON request (" + e + ")");
 		}
-		// TODO - check posted properties
-		// TODO - add to collection
-		// TODO - return new entity
+		var insertObj = endpointUtils.checkPostObject(bodyJson, config.collectionPropertyOptions);
+		// check that the name doesn't conflict with any existing...
+		var foundByName = config.collection.findOne(mongo.createBasicDBObject('name', bodyJson['name']));
+		if (foundByName !== null) {
+			throw new com.adeptions.exceptions.ConflictException("Entity with name '" + bodyJson['name'] + "' already exists!");
+		}
+		// all ok, give it an id and etag...
+		var id = endpointUtils.issueId();
+		var etag = endpointUtils.issueEtag();
+		insertObj['id'] = id;
+		insertObj['etag'] = etag;
+		config.collection.save(insertObj);
+		insertObj.removeField('_id');
+		config.refObject(insertObj);
+		response.setHeader('Etag', '"' + etag + '"');
+		response.setStatus(201);
+		return insertObj;
 	}
 
 	function doOptions(request, response) {

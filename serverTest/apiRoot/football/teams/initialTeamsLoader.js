@@ -175,6 +175,7 @@ importPackage(com.mongodb);
 			}
 		}
 		dbobj.put('id', java.util.UUID.randomUUID().toString());
+		dbobj.put('etag', java.util.UUID.randomUUID().toString());
 		collection.save(dbobj);
 	}
 })();
