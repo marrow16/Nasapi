@@ -15,8 +15,8 @@ import javax.ws.rs.core.*;
 import java.io.InputStream;
 
 @Path("/{path: [a-zA-Z0-9\\-\\./\\_]+}")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class Endpoint {
 	@Autowired
 	Mappings mappings;
