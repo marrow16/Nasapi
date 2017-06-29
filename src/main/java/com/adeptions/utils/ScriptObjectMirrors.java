@@ -61,18 +61,19 @@ public class ScriptObjectMirrors {
 				builder.append("]");
 			} else if (scriptObject.isFunction()) {
 				builder.append("[function()]");
+			} else {
+				builder.append("{");
+				boolean isFirst = true;
+				for (Map.Entry<String, Object> entry : scriptObject.entrySet()) {
+					builder.append(isFirst ? "" : ", ")
+							.append("\"")
+							.append(entry.getKey())
+							.append("\": ");
+					StringifyObject(entry.getValue(), builder, true);
+					isFirst = false;
+				}
+				builder.append("}");
 			}
-			builder.append("{");
-			boolean isFirst = true;
-			for (Map.Entry<String,Object> entry: scriptObject.entrySet()) {
-				builder.append(isFirst ? "" : ", ")
-						.append("\"")
-						.append(entry.getKey())
-						.append("\": ");
-				StringifyObject(entry.getValue(), builder, true);
-				isFirst = false;
-			}
-			builder.append("}");
 		} else {
 			builder.append(object.toString());
 		}
