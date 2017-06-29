@@ -1,10 +1,13 @@
 package com.adeptions.mongo;
 
+import com.adeptions.utils.ScriptObjectMirrors;
 import com.mongodb.*;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import com.mongodb.util.JSON;
 
 import java.util.Map;
 
@@ -13,8 +16,6 @@ public class MongoContainer {
 	private MongoTemplate template;
 	private MongoDbFactory mongoDbFactory;
 	private MongoMappingContext context;
-	private String databaseName;
-	private DB database;
 
 	public MongoContainer(MongoClient mongoClient,
 						  MongoTemplate template,
@@ -25,12 +26,6 @@ public class MongoContainer {
 		this.template = template;
 		this.mongoDbFactory = mongoDbFactory;
 		this.context = context;
-//		databaseName = environment.getProperty("spring.data.mongodb.database");
-//		if (databaseName == null) {
-//			databaseName = "nasapi";
-//		}
-//		database = mongoClient.getDB(databaseName);
-//		template.getDb();
 	}
 
 	public DBCollection getCollection(String name) {
@@ -58,6 +53,13 @@ public class MongoContainer {
 	}
 
 	public BasicDBObject createBasicDBObject(Map map) {
+		if (map instanceof ScriptObjectMirror) {
+			return new BasicDBObject((Map)ScriptObjectMirrors.convert(map));
+		}
 		return new BasicDBObject(map);
+	}
+
+	public DBObject parseDBObject(String json) {
+		return (DBObject)JSON.parse(json);
 	}
 }
