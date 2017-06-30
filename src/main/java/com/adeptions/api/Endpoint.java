@@ -3,7 +3,7 @@ package com.adeptions.api;
 import com.adeptions.exceptions.*;
 import com.adeptions.mappings.Mapping;
 import com.adeptions.mappings.Mappings;
-import com.adeptions.rsextensions.*;
+import com.adeptions.annotations.*;
 import com.adeptions.wrappers.EndpointRequest;
 import com.adeptions.wrappers.EndpointResponse;
 import org.springframework.beans.factory.annotation.Autowired;

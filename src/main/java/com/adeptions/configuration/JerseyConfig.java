@@ -1,8 +1,10 @@
-package com.adeptions.jersey;
+package com.adeptions.configuration;
 
 import com.adeptions.api.Endpoint;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class JerseyConfig extends ResourceConfig {
 	public JerseyConfig() {
 		// make sure the exception mappers are used...

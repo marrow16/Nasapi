@@ -1,11 +1,11 @@
-package com.adeptions.rsextensions;
+package com.adeptions.annotations;
 
 import javax.ws.rs.HttpMethod;
 import java.lang.annotation.*;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@HttpMethod("PURGE")
+@HttpMethod("UNLINK")
 @Documented
-public @interface PURGE {
+public @interface UNLINK {
 }

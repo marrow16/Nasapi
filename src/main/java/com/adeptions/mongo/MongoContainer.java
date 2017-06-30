@@ -12,6 +12,8 @@ import com.mongodb.util.JSON;
 import java.util.Map;
 
 public class MongoContainer {
+	public static final String BINDING_NAME = "mongo";
+
 	private MongoClient mongoClient;
 	private MongoTemplate template;
 	private MongoDbFactory mongoDbFactory;

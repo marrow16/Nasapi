@@ -82,4 +82,9 @@ class MappingTree extends MappingTreeEntry {
 		MultivaluedHashMap<String,String> pathVariablesFound = new MultivaluedHashMap<String,String>();
 		return find(path, pathVariablesFound);
 	}
+
+	public void clear() {
+		rootMapping = null;
+
+	}
 }

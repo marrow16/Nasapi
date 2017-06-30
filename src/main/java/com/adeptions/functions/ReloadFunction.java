@@ -1,4 +1,4 @@
-package com.adeptions.mappings.functions;
+package com.adeptions.functions;
 
 import com.adeptions.exceptions.MappingException;
 import jdk.nashorn.api.scripting.NashornException;

@@ -48,11 +48,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jersey</artifactId>
 		</dependency>
+<!--
 		<dependency>
-			<!-- default server monitoring available via HTTP requests -->
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+-->
 		<!-- use Mongo DB -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

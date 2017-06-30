@@ -1,4 +1,4 @@
-package com.adeptions.mappings.context;
+package com.adeptions.engine.globals;
 
 import com.adeptions.utils.ScriptObjectMirrors;
 import org.slf4j.Logger;
@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Console {
+	public static final String BINDING_NAME = "console";
+
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private int groupLevel;
 	private Map<String,Long> timers = new HashMap<String,Long>();

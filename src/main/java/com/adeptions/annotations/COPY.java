@@ -1,4 +1,4 @@
-package com.adeptions.rsextensions;
+package com.adeptions.annotations;
 
 import javax.ws.rs.HttpMethod;
 import java.lang.annotation.*;

@@ -1,17 +1,15 @@
 package com.adeptions;
 
-import com.adeptions.jersey.JerseyConfig;
+import com.adeptions.engine.NashornScriptEngineHolder;
 import com.adeptions.exceptions.NasapiException;
 import com.adeptions.mappings.Mappings;
 import com.adeptions.mongo.MongoContainer;
 import com.mongodb.MongoClient;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -64,22 +62,21 @@ public class Nasapi {
 		return new MongoContainer(mongoClient, template, mongoDbFactory, context, environment);
 	}
 
+
 	/**
 	 * Create the Mappings
-	 * @param mongoContainer
-	 * @return
+	 * @return the Mappings
 	 * @throws IOException
 	 * @throws ScriptException
 	 */
-	@Bean(name = "Mappings")
-	private Mappings mappings(MongoContainer mongoContainer) throws IOException, ScriptException, NasapiException {
-		return new Mappings(startupArgs, mongoContainer);
+	@Bean
+	private Mappings mappings() throws IOException, ScriptException, NasapiException {
+		return new Mappings();
 	}
 
 	@Bean
-	@DependsOn("Mappings")
-	private ResourceConfig jerseyConfig() {
-		return new JerseyConfig();
+	NashornScriptEngineHolder nashornScriptEngineHolder(Mappings mappings, MongoContainer mongoContainer) throws NasapiException, ScriptException, IOException {
+		return new NashornScriptEngineHolder(startupArgs, mappings, mongoContainer);
 	}
 
 	/**

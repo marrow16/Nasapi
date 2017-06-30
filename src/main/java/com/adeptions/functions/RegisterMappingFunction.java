@@ -1,4 +1,4 @@
-package com.adeptions.mappings.functions;
+package com.adeptions.functions;
 
 import com.adeptions.exceptions.MappingException;
 import com.adeptions.mappings.Mapping;

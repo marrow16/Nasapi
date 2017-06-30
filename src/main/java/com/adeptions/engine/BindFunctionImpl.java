@@ -1,20 +1,20 @@
-package com.adeptions.mappings;
+package com.adeptions.engine;
 
 import com.adeptions.exceptions.MappingException;
-import com.adeptions.mappings.functions.BindFunction;
+import com.adeptions.functions.BindFunction;
 import jdk.nashorn.api.scripting.NashornException;
 
 import javax.script.ScriptException;
 
 public class BindFunctionImpl implements BindFunction {
-	private Mappings mappings;
+	private NashornScriptEngineHolder scriptEngineHolder;
 
-	BindFunctionImpl(Mappings mappings) {
-		this.mappings = mappings;
+	BindFunctionImpl(NashornScriptEngineHolder scriptEngineHolder) {
+		this.scriptEngineHolder = scriptEngineHolder;
 	}
 
 	@Override
 	public void bind(String name, Object object) throws ScriptException, NashornException, MappingException {
-		mappings.bind(name, object);
+		scriptEngineHolder.bind(name, object);
 	}
 }
