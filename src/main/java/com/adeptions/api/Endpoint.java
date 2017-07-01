@@ -7,6 +7,8 @@ import com.adeptions.annotations.*;
 import com.adeptions.wrappers.EndpointRequest;
 import com.adeptions.wrappers.EndpointResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -156,7 +158,9 @@ public class Endpoint {
 		if (mapping == null) {
 			throw new com.adeptions.exceptions.NotFoundException("No such URI '" + path + "'");
 		}
-		EndpointRequest request = new EndpointRequest(uriInfo, httpRequest, pathParameters, requestBodyStream);
+		Object x = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(x);
+		EndpointRequest request = new EndpointRequest(uriInfo, httpRequest, pathParameters, requestBodyStream, SecurityContextHolder.getContext().getAuthentication());
 		EndpointResponse response = new EndpointResponse(httpResponse);
 		Object methodResult = mapping.doMethod(httpMethod, path, request, response);
 		Response result = null;

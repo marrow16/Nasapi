@@ -4,6 +4,8 @@ import com.adeptions.engine.globals.Console;
 import com.adeptions.exceptions.NasapiException;
 import com.adeptions.mappings.Mappings;
 import com.adeptions.mongo.MongoContainer;
+import com.adeptions.security.AuthenticationResponse;
+import com.adeptions.security.Authenticator;
 import com.coveo.nashorn_modules.FilesystemFolder;
 import com.coveo.nashorn_modules.Require;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
@@ -31,6 +33,7 @@ public class NashornScriptEngineHolder {
 	private String[] startupArgs;
 	private Mappings mappings;
 	private MongoContainer mongoContainer;
+	private Authenticator authenticator;
 
 	public NashornScriptEngineHolder(String[] startupArgs, Mappings mappings, MongoContainer mongoContainer) throws NasapiException, IOException, ScriptException {
 		this.startupArgs = startupArgs;
@@ -84,8 +87,11 @@ public class NashornScriptEngineHolder {
 		bindings.put(Mappings.FUNCTION_NAME_REGISTER_MAPPING, mappings);
 		// and pass in the startup arguments (in case the scripts need something from them)...
 		bindings.put(BINDING_NAME_ARGUMENTS, startupArgs);
-		// make the mongo container acessible from scripts...
+		// make the mongo container accessible from scripts...
 		bindings.put(MongoContainer.BINDING_NAME, mongoContainer);
+		// make registerAuthentication function available to scripts...
+		authenticator = new Authenticator(this);
+		bindings.put(Authenticator.FUNCTION_NAME_REGISTER_AUTHENTICATION, authenticator);
 		// make the reload function available from scripts...
 		bindings.put(FUNCTION_NAME_RELOAD, new ReloadFunctionImpl(this));
 		// make the bind function available from scripts...
@@ -108,4 +114,7 @@ public class NashornScriptEngineHolder {
 		bindings.put(name, object);
 	}
 
+	public AuthenticationResponse authenticate(String username) {
+		return authenticator.authenticate(username);
+	}
 }

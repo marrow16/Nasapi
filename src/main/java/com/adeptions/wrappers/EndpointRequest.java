@@ -1,5 +1,7 @@
 package com.adeptions.wrappers;
 
+import org.springframework.security.core.Authentication;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
@@ -16,15 +18,24 @@ public class EndpointRequest {
 	private InputStream body;
 	private boolean gotBodyString = false;
 	private String bodyString;
+	private Authentication authentication;
 
 	public EndpointRequest(UriInfo uriInfo,
 						   HttpServletRequest httpRequest,
 						   MultivaluedMap<String,String> pathParameters,
-						   InputStream body) {
+						   InputStream body,
+						   Authentication authentication) {
 		this.uriInfo = uriInfo;
 		this.httpRequest = httpRequest;
 		this.pathParameters = pathParameters;
 		this.body = body;
+		this.authentication = authentication;
+		authentication.getName();
+		authentication.getAuthorities();
+		authentication.getCredentials();
+		authentication.getDetails();
+		authentication.getPrincipal();
+		authentication.isAuthenticated();
 	}
 
 	public UriInfo getUriInfo() {
@@ -82,5 +93,9 @@ public class EndpointRequest {
 			bodyString = out.toString();
 		}
 		return bodyString;
+	}
+
+	public Authentication getAuthentication() {
+		return authentication;
 	}
 }

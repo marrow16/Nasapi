@@ -11,9 +11,17 @@
 	});
 
 	function doGet(request, response) {
+		var authentication = request.getAuthentication();
+		console.log('authentication', authentication);
+		console.log('authentication.getName()', authentication.getName());
+		console.log('authentication.getAuthorities()', authentication.getAuthorities());
+		console.log('authentication.getCredentials()', authentication.getCredentials());
+		console.log('authentication.getDetails()', authentication.getDetails());
+		console.log('authentication.getPrincipal()', authentication.getPrincipal());
+		console.log('authentication.isAuthenticated()', authentication.isAuthenticated());
+
 		var fields = endpointUtils.getFieldsRequested(request.getQueryParameter("properties"), config.collectionPropertyOptions);
 		var finds = endpointUtils.getFilteringRequested(request.getQueryParameters(), config.collectionPropertyOptions);
-//		var cursor = config.collection.find(mongo.createBasicDBObject(), fields);
 		var cursor = config.collection.find(finds, fields);
 		// build any sorting from query 'sort' params...
 		var sortObj = endpointUtils.getDBSortObjectFromQueryParams(request.getQueryParameter("sort"),  config.collectionPropertyOptions);
