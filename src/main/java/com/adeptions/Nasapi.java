@@ -7,7 +7,9 @@ import com.adeptions.mongo.MongoContainer;
 import com.mongodb.MongoClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -23,7 +25,8 @@ import java.io.IOException;
 
 @ComponentScan
 @EnableAutoConfiguration
-public class Nasapi {
+@SpringBootApplication
+public class Nasapi extends SpringBootServletInitializer {
 	private static String[] startupArgs;
 	private MongoDbFactory mongoDbFactory;
 	private MongoMappingContext context;
@@ -54,7 +57,7 @@ public class Nasapi {
 	 * @return the MongoContainer
 	 */
 	@Bean
-	private MongoContainer mongoContainer(MongoClient mongoClient,
+	public MongoContainer mongoContainer(MongoClient mongoClient,
 										  MongoTemplate template,
 										  MongoDbFactory mongoDbFactory,
 										  MongoMappingContext context,
@@ -70,12 +73,12 @@ public class Nasapi {
 	 * @throws ScriptException
 	 */
 	@Bean
-	private Mappings mappings() throws IOException, ScriptException, NasapiException {
+	public Mappings mappings() throws IOException, ScriptException, NasapiException {
 		return new Mappings();
 	}
 
 	@Bean
-	NashornScriptEngineHolder nashornScriptEngineHolder(Mappings mappings, MongoContainer mongoContainer) throws NasapiException, ScriptException, IOException {
+	public NashornScriptEngineHolder nashornScriptEngineHolder(Mappings mappings, MongoContainer mongoContainer) throws NasapiException, ScriptException, IOException {
 		return new NashornScriptEngineHolder(startupArgs, mappings, mongoContainer);
 	}
 
