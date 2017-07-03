@@ -1,5 +1,7 @@
 'use strict';
 
+var exceptions = require('./exceptions').exceptions;
+
 exports.utils = {
 	allowedComparators: {
 		'$eq': true,
@@ -70,7 +72,7 @@ exports.utils = {
 	},
 	checkPropertyType: function(propertyName, propertyInfo, value) {
 		if (value === null && !propertyInfo.nullabe) {
-			throw new com.adeptions.exceptions.BadRequestException("Property '" + propertyName + "' cannot be null");
+			throw new exceptions.BadRequestException("Property '" + propertyName + "' cannot be null");
 		}
 		var foundType = (Array.isArray(value) ? 'array' : typeof value);
 		if (foundType !== propertyInfo.type) {
@@ -87,7 +89,7 @@ exports.utils = {
 					}
 					break;
 			}
-			throw new com.adeptions.exceptions.BadRequestException("Property '" + propertyName + "' is incorrect type - expected '" + propertyInfo.type + "' but found '" + foundType + "'");
+			throw new exceptions.BadRequestException("Property '" + propertyName + "' is incorrect type - expected '" + propertyInfo.type + "' but found '" + foundType + "'");
 		}
 	},
 	getFilteringRequested: function(queryParams, collectionProperties) {
@@ -110,7 +112,7 @@ exports.utils = {
 			if (collectionProperties.hasOwnProperty(propertyName)) {
 				valueType = collectionProperties[propertyName].type;
 				if (!this.allowedComparators.hasOwnProperty(comparator)) {
-					throw new com.adeptions.exceptions.BadRequestException("Filter comparator '" + comparator.substr(1) + "' invalid (filter property '" + propertyName + "')");
+					throw new exceptions.BadRequestException("Filter comparator '" + comparator.substr(1) + "' invalid (filter property '" + propertyName + "')");
 				}
 				var paramValues = queryParams[pty];
 				for (var s = 0, smax = paramValues.length; s < smax; s++) {
@@ -166,7 +168,7 @@ exports.utils = {
 			}
 		}
 		if (mandatoryPropertiesMissing.length > 0) {
-			throw new com.adeptions.exceptions.BadRequestException("Mandatory properties missing - " + mandatoryPropertiesMissing.join(","));
+			throw new exceptions.BadRequestException("Mandatory properties missing - " + mandatoryPropertiesMissing.join(","));
 		}
 		return insertObj;
 	},
@@ -187,5 +189,21 @@ exports.utils = {
 	},
 	issueEtag: function() {
 		return java.util.UUID.randomUUID().toString();
+	},
+	checkEtagIfMatch: function(ifMatchHeader, entityEtag) {
+		if (ifMatchHeader !== null && ifMatchHeader !== '*' && entityEtag !== null) {
+			// strip quotes off of if-match header...
+			var matchEtag = ifMatchHeader;
+			if (matchEtag.substr(0,1) === '"') {
+				matchEtag = matchEtag.substr(1);
+			}
+			if (matchEtag.substr(matchEtag.length - 1) === '"') {
+				matchEtag = matchEtag.substr(0, matchEtag.length - 1);
+			}
+			// check they are equal...
+			if (entityEtag !== matchEtag) {
+				throw new exceptions.PreconditionFailedException("If-Match ETag does not match current entity ETag")
+			}
+		}
 	}
 };

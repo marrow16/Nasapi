@@ -1,11 +1,8 @@
 'use strict';
 
 // register authenticator...
-registerAuthenticator(function(username, authenticationResponse) {
-	console.log('Authenticating user: ', username);
-	// we'll just authenticate any user that supplies a password of 'admin'...
-	return "admin"; // the default password for all users
-});
+require('./authentication/authenticator');
+
 // require the endpoints...
 require('./apiRoot/football/teams/index');
 // TODO - other endpoints...
