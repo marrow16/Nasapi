@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.xml.ws.WebServiceContext;
 import java.io.InputStream;
 
 @Path("/{path: [a-zA-Z0-9\\-\\./\\_]+}")
@@ -158,8 +159,6 @@ public class Endpoint {
 		if (mapping == null) {
 			throw new com.adeptions.exceptions.NotFoundException("No such URI '" + path + "'");
 		}
-		Object x = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println(x);
 		EndpointRequest request = new EndpointRequest(uriInfo, httpRequest, pathParameters, requestBodyStream, SecurityContextHolder.getContext().getAuthentication());
 		EndpointResponse response = new EndpointResponse(httpResponse);
 		Object methodResult = mapping.doMethod(httpMethod, path, request, response);

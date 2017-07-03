@@ -1,6 +1,7 @@
 package com.adeptions.wrappers;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
@@ -9,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EndpointRequest {
 	private UriInfo uriInfo;
@@ -19,6 +22,7 @@ public class EndpointRequest {
 	private boolean gotBodyString = false;
 	private String bodyString;
 	private Authentication authentication;
+	private Set<String> roles = new HashSet<String>();
 
 	public EndpointRequest(UriInfo uriInfo,
 						   HttpServletRequest httpRequest,
@@ -30,12 +34,11 @@ public class EndpointRequest {
 		this.pathParameters = pathParameters;
 		this.body = body;
 		this.authentication = authentication;
-		authentication.getName();
-		authentication.getAuthorities();
-		authentication.getCredentials();
-		authentication.getDetails();
-		authentication.getPrincipal();
-		authentication.isAuthenticated();
+		if (authentication != null) {
+			for (GrantedAuthority authority: authentication.getAuthorities()) {
+				roles.add(authority.getAuthority());
+			}
+		}
 	}
 
 	public UriInfo getUriInfo() {
@@ -97,5 +100,9 @@ public class EndpointRequest {
 
 	public Authentication getAuthentication() {
 		return authentication;
+	}
+
+	public Boolean hasRole(String role) {
+		return roles.contains(role);
 	}
 }
