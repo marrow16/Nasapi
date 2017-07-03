@@ -1,21 +1,37 @@
 package com.adeptions.exceptions.mappers;
 
-import com.adeptions.exceptions.NasapiException;
-import org.slf4j.Logger;
+import com.adeptions.exceptions.*;
+import jdk.nashorn.internal.runtime.ECMAException;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractExceptionMapper {
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());
-	protected Response buildResponse(NasapiException ex) {
-		logger.warn(ex.getMessage());
+abstract class AbstractExceptionMapper {
+	Response buildResponse(NasapiException ex, ECMAException outerScriptException, HttpServletRequest request) {
+		LoggerFactory.getLogger(ex.getClass()).warn(ex.getMessage() + buildScriptInfoMessage(outerScriptException) + buildRequestInfoMessage(request));
 		Map<String,Object> body = new HashMap<String,Object>();
 		body.put("$error", ex.getMessage());
 		return Response.status(ex.getStatusCode())
 				.entity(body)
 				.build();
+	}
+
+	String buildScriptInfoMessage(ECMAException outerScriptException) {
+		String result = "";
+		if (outerScriptException != null) {
+			result = " [at:- " + outerScriptException.getFileName() + ":" + outerScriptException.getLineNumber() + "," + outerScriptException.getColumnNumber() + "]";
+		}
+		return result;
+	}
+
+	String buildRequestInfoMessage(HttpServletRequest request) {
+		String result = "";
+		if (request != null) {
+			result = " [from:- " + request.getMethod() + " " + request.getRequestURI() + "]";
+		}
+		return result;
 	}
 }
