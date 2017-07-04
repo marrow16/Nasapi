@@ -13,7 +13,6 @@ import java.util.Map;
 
 public class MongoContainer {
 	public static final String BINDING_NAME = "mongo";
-
 	private MongoClient mongoClient;
 	private MongoTemplate template;
 	private MongoDbFactory mongoDbFactory;
@@ -28,6 +27,10 @@ public class MongoContainer {
 		this.template = template;
 		this.mongoDbFactory = mongoDbFactory;
 		this.context = context;
+	}
+
+	public MongoClient getClient() {
+		return mongoClient;
 	}
 
 	public DBCollection getCollection(String name) {
