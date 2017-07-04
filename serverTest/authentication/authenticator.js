@@ -5,9 +5,10 @@ exports.authenticator = new Authenticator();
 function Authenticator() {
 	var collectionName = 'users';
 	var collection = mongo.getCollection(collectionName);
+	var adminUsername = 'admin';
 	// initial check to see if there are any users stored...
 	if (Number(collection.count()) === 0) {
-		var adminUsername = 'admin';
+		// no users - so create an admin user...
 		var adminPassword = java.util.UUID.randomUUID().toString();
 		var dbobj = mongo.createBasicDBObject({
 			'username': adminUsername,
@@ -16,6 +17,12 @@ function Authenticator() {
 		});
 		collection.save(dbobj);
 		console.log("AUTHENTICATION CREATED ADMIN USER: Username 'admin', password: '" + adminPassword + "'");
+	} else {
+		// in case we've forgotten the admin user password - we're going to console log it...
+		var adminFound = collection.findOne(mongo.createBasicDBObject('username', adminUsername));
+		if (adminFound) {
+			console.log('ADMIN USER PASSWORD:- ', adminFound['password']);
+		}
 	}
 	// register the authenticator function...
 	registerAuthenticator(authenticate);
