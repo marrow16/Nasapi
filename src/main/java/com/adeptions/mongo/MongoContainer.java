@@ -3,6 +3,7 @@ package com.adeptions.mongo;
 import com.adeptions.utils.ScriptObjectMirrors;
 import com.mongodb.*;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.bson.types.ObjectId;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -66,5 +67,17 @@ public class MongoContainer {
 
 	public DBObject parseDBObject(String json) {
 		return (DBObject)JSON.parse(json);
+	}
+
+	public String getObjectIdString(DBObject dbObject) {
+		return ((ObjectId)dbObject.get("_id")).toHexString();
+	}
+
+	public ObjectId createObjectId(String id) {
+		try {
+			return new ObjectId(id);
+		} catch (IllegalArgumentException iae) {
+			return null;
+		}
 	}
 }
