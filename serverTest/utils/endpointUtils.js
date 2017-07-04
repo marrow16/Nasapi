@@ -33,7 +33,7 @@ exports.utils = {
 				result = sortObj;
 			}
 		}
-		return sortObj;
+		return result;
 	},
 	getFieldsRequested: function(queryParams, collectionProperties) {
 		var fieldsObj = mongo.createBasicDBObject();
