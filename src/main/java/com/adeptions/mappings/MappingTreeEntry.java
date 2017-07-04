@@ -63,24 +63,27 @@ class MappingTreeEntry {
 		String partToFind = pathParts.get(index);
 		boolean onLastPart = (index == (pathParts.size() - 1));
 		MappingTreeEntry found = fixedEntryMappings.get(partToFind);
-		if (found == null) {
-			for (MappingTreeEntry entry: variableEntryMappings) {
-				if (!entry.pathToken.hasRegexp) {
-					pathVariablesFound.add(entry.pathToken.pathVariableName, partToFind);
-					found = entry;
-					break;
-				} else if (entry.pathToken.pattern.matcher(partToFind).matches()) {
-					pathVariablesFound.add(entry.pathToken.pathVariableName, partToFind);
-					found = entry;
-					break;
-				}
-			}
-		}
 		if (found != null) {
 			if (found.lastInPath && onLastPart) {
 				return found.mapping;
 			} else if (!onLastPart) {
 				return found.find(pathParts, index + 1, pathVariablesFound);
+			}
+		}
+		Mapping foundMapping;
+		for (MappingTreeEntry entry: variableEntryMappings) {
+			if (!entry.pathToken.hasRegexp || entry.pathToken.pattern.matcher(partToFind).matches()) {
+				// it's a candidate...
+				if (entry.lastInPath && onLastPart) {
+					pathVariablesFound.add(entry.pathToken.pathVariableName, partToFind);
+					return entry.mapping;
+				} else if (!entry.lastInPath && !onLastPart) {
+					foundMapping = entry.find(pathParts, index + 1, pathVariablesFound);
+					if (foundMapping != null) {
+						pathVariablesFound.add(entry.pathToken.pathVariableName, partToFind);
+						return foundMapping;
+					}
+				}
 			}
 		}
 		return null;

@@ -145,4 +145,43 @@ public class MappingTreeTests {
 		assertEquals("aaa", pathVariables1.get("variable").get(0));
 		assertEquals("123", pathVariables2.get("variable").get(0));
 	}
+
+	@Test
+	public void testComplexFixedAndVariable() throws MappingException {
+		Mapping mapping1 = new Mapping("/database/{databaseName: [a-zA-Z]+}", null);
+		Mapping mapping2 = new Mapping("/database/{databaseName: [a-zA-Z]+}/collection", null);
+		Mapping mapping3 = new Mapping("/database/{databaseName: [a-zA-Z]+}/collection/{collectionName: [a-zA-Z]+}", null);
+		Mapping mapping4 = new Mapping("/database/{databaseName: [a-zA-Z]+}/collection/{collectionName: [a-zA-Z]+}/items", null);
+		Mapping mapping5 = new Mapping("/database/{databaseName: [a-zA-Z]+}/collection/{collectionName: [a-zA-Z]+}/items/{itemId: [0-9]+}", null);
+		MappingTree mappingTree = new MappingTree();
+		mappingTree.put(mapping1);
+		mappingTree.put(mapping2);
+		mappingTree.put(mapping3);
+		mappingTree.put(mapping4);
+		mappingTree.put(mapping5);
+		MultivaluedHashMap<String,String> pathVariables1 = new MultivaluedHashMap<String,String>();
+		MultivaluedHashMap<String,String> pathVariables2 = new MultivaluedHashMap<String,String>();
+		MultivaluedHashMap<String,String> pathVariables3 = new MultivaluedHashMap<String,String>();
+		MultivaluedHashMap<String,String> pathVariables4 = new MultivaluedHashMap<String,String>();
+		MultivaluedHashMap<String,String> pathVariables5 = new MultivaluedHashMap<String,String>();
+		Mapping find1 = mappingTree.find("database/foodb", pathVariables1);
+		Mapping find2 = mappingTree.find("database/foodb/collection", pathVariables2);
+		Mapping find3 = mappingTree.find("database/foodb/collection/foocollection", pathVariables3);
+		Mapping find4 = mappingTree.find("database/foodb/collection/foocollection/items", pathVariables4);
+		Mapping find5 = mappingTree.find("database/foodb/collection/foocollection/items/123", pathVariables5);
+		assertEquals(mapping1, find1);
+		assertEquals("foodb", pathVariables1.getFirst("databaseName"));
+		assertEquals(mapping2, find2);
+		assertEquals("foodb", pathVariables2.getFirst("databaseName"));
+		assertEquals(mapping3, find3);
+		assertEquals("foodb", pathVariables3.getFirst("databaseName"));
+		assertEquals("foocollection", pathVariables3.getFirst("collectionName"));
+		assertEquals(mapping4, find4);
+		assertEquals("foodb", pathVariables4.getFirst("databaseName"));
+		assertEquals("foocollection", pathVariables4.getFirst("collectionName"));
+		assertEquals(mapping5, find5);
+		assertEquals("foodb", pathVariables5.getFirst("databaseName"));
+		assertEquals("foocollection", pathVariables5.getFirst("collectionName"));
+		assertEquals("123", pathVariables5.getFirst("itemId"));
+	}
 }
