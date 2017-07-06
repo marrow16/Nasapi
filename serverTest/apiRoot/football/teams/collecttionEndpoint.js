@@ -55,13 +55,11 @@
 		if (foundByName !== null) {
 			throw new exceptions.ConflictException("Entity with name '" + bodyJson['name'] + "' already exists!");
 		}
-		// all ok, give it an id and etag...
-		var id = endpointUtils.issueId();
+		// all ok, give it an etag...
 		var etag = endpointUtils.issueEtag();
-		insertObj['id'] = id;
 		insertObj['etag'] = etag;
-		config.collection.save(insertObj);
-		insertObj.removeField('_id');
+		config.collection.insert(insertObj);
+//		insertObj.removeField('_id');
 		config.refObject(insertObj);
 		response.setHeader('Etag', '"' + etag + '"');
 		response.setStatus(201);

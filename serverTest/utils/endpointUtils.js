@@ -37,7 +37,7 @@ exports.utils = {
 	},
 	getFieldsRequested: function(queryParams, collectionProperties) {
 		var fieldsObj = mongo.createBasicDBObject();
-		fieldsObj.append('_id', 0);
+		fieldsObj.append('_id', 1);
 		var pty;
 		// fill in the default listed properties...
 		for (pty in collectionProperties) {
@@ -110,6 +110,9 @@ exports.utils = {
 				propertyName = propertyName.substring(0, squareAt);
 			}
 			if (collectionProperties.hasOwnProperty(propertyName)) {
+				if (!collectionProperties[propertyName].filterable) {
+					throw new exceptions.BadRequestException("Filter cannot be applied to property '" + propertyName + "'");
+				}
 				valueType = collectionProperties[propertyName].type;
 				if (!this.allowedComparators.hasOwnProperty(comparator)) {
 					throw new exceptions.BadRequestException("Filter comparator '" + comparator.substr(1) + "' invalid (filter property '" + propertyName + "')");

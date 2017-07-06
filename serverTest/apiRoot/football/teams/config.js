@@ -19,6 +19,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: false,
 				postMandatory: false,
+				filterable: false,
 				sortable: true,
 				defaultListed: true
 			},
@@ -33,6 +34,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: false,
 				postMandatory: false,
+				filterable: false,
 				sortable: false,
 				defaultListed: true
 			},
@@ -47,6 +49,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: false,
 				postMandatory: false,
+				filterable: true,
 				sortable: false,
 				defaultListed: false
 			},
@@ -61,6 +64,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: true,
 				postMandatory: true,
+				filterable: true,
 				sortable: true,
 				defaultListed: true
 			},
@@ -75,6 +79,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: true,
 				postMandatory: true,
+				filterable: true,
 				sortable: true,
 				defaultListed: false
 			},
@@ -89,6 +94,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: true,
 				postMandatory: false,
+				filterable: true,
 				sortable: true,
 				defaultListed: false
 			},
@@ -103,6 +109,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: true,
 				postMandatory: false,
+				filterable: true,
 				sortable: true,
 				defaultListed: false
 			},
@@ -117,6 +124,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: true,
 				postMandatory: false,
+				filterable: true,
 				sortable: true,
 				defaultListed: false
 			},
@@ -131,6 +139,7 @@ function EndpointConfig() {
 			$collection: {
 				postable: true,
 				postMandatory: false,
+				filterable: true,
 				sortable: true,
 				defaultListed: false
 			},
@@ -141,7 +150,7 @@ function EndpointConfig() {
 	};
 	// build list of fields that we'll pull back at each query...
 	var fields = {
-		'_id': 0
+		'_id': 1
 	};
 	var collectionPropertyOptions = {};
 	var entityPropertyOptions = {};
@@ -155,6 +164,7 @@ function EndpointConfig() {
 				description: propertyDef.description,
 				postable: propertyDef.$collection.postable,
 				postMandatory: propertyDef.$collection.postMandatory,
+				filterable: propertyDef.$collection.filterable,
 				sortable: propertyDef.$collection.sortable,
 				defaultListed: propertyDef.$collection.defaultListed
 			};
@@ -177,7 +187,9 @@ function EndpointConfig() {
 		entityPropertyOptions: entityPropertyOptions,
 		uri: uri,
 		refObject: function(dbobj) {
-			dbobj['$ref'] = uri + '/' + dbobj.id;
+			dbobj['$ref'] = uri + '/' + mongo.getObjectIdString(dbobj);
+			dbobj['id'] = mongo.getObjectIdString(dbobj);
+			dbobj.remove('_id');
 			return dbobj;
 		}
 	};

@@ -11,13 +11,20 @@
 		'OPTIONS': doOptions
 	});
 
-	function doGet(request, response) {
-		var id = request.getPathParameterFirst('id');
-		var found = config.collection.findOne(mongo.createBasicDBObject('id', id), config.dbFields);
-		if (found !== null) {
-			return config.refObject(found);
+	function findById(id) {
+		var idObject = mongo.createObjectId(id);
+		if (idObject === null) {
+			throw new exceptions.NotFoundException("Cannot find entity with invalid id '" + itemId + "'");
 		}
-		throw new exceptions.NotFoundException("Cannot find entity (id: '" + id + "')");
+		var found = config.collection.findOne(mongo.createBasicDBObject('_id', idObject));
+		if (found === null) {
+			throw new exceptions.NotFoundException("Cannot find entity (id: '" + id + "')");
+		}
+		return found;
+	}
+
+	function doGet(request, response) {
+		return config.refObject(findById(request.getPathParameterFirst('id')));
 	}
 
 	function doDelete(request, response) {
@@ -25,10 +32,7 @@
 			throw new exceptions.ForbiddenException("Insufficient privileges");
 		}
 		var id = request.getPathParameterFirst('id');
-		var found = config.collection.findOne(mongo.createBasicDBObject('id', id));
-		if (found === null) {
-			throw new exceptions.NotFoundException("Cannot find entity (id: '" + id + "')");
-		}
+		var found = findById(request.getPathParameterFirst('id'));
 		// check etag if-match...
 		endpointUtils.checkEtagIfMatch(request.getHeader('If-Match'), found['etag']);
 		config.collection.remove(found);
@@ -48,10 +52,7 @@
 			throw new exceptions.BadRequestException("Invalid JSON request (" + e + ")");
 		}
 		var id = request.getPathParameterFirst('id');
-		var found = config.collection.findOne(mongo.createBasicDBObject('id', id));
-		if (found === null) {
-			throw new exceptions.NotFoundException("Cannot find entity (id: '" + id + "')");
-		}
+		var found = findById(id);
 		// check etag if-match...
 		endpointUtils.checkEtagIfMatch(request.getHeader('If-Match'), found['etag']);
 		response.setHeader('X-Pre-ETag', '"' + found['etag'] + '"');
@@ -60,7 +61,7 @@
 		var updatedName = updateObj['name'];
 		if (updatedName !== null) {
 			var findExistingQuery = mongo.createBasicDBObject('name', updatedName);
-			findExistingQuery.append('id', mongo.createBasicDBObject('$ne', id));
+			findExistingQuery.append('_id', mongo.createBasicDBObject('$ne', mongo.createObjectId(id)));
 			var findExisting = config.collection.findOne(findExistingQuery);
 			if (findExisting !== null) {
 				throw new exceptions.ConflictException("Entity with name '" + bodyJson['name'] + "' already exists!");
@@ -71,8 +72,8 @@
 		updateObj['etag'] = newEtag;
 		response.setHeader('ETag', '"' + newEtag + '"');
 		var updater = mongo.createBasicDBObject('$set', updateObj);
-		config.collection.update(mongo.createBasicDBObject('id', id), updater);
-		return config.refObject(config.collection.findOne(mongo.createBasicDBObject('id', id), config.dbFields));
+		config.collection.update(mongo.createBasicDBObject('_id', mongo.createObjectId(id)), updater);
+		return config.refObject(config.collection.findOne(mongo.createBasicDBObject('_id', mongo.createObjectId(id)), config.dbFields));
 	}
 
 	function doOptions(request, response) {
