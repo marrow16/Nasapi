@@ -70,7 +70,11 @@ public class MongoContainer {
 	}
 
 	public String getObjectIdString(DBObject dbObject) {
-		return ((ObjectId)dbObject.get("_id")).toHexString();
+		Object id = dbObject.get("_id");
+		if (id instanceof ObjectId) {
+			return ((ObjectId)id).toHexString();
+		}
+		return id.toString();
 	}
 
 	public ObjectId createObjectId(String id) {
