@@ -4,7 +4,7 @@
 	var uri = '/databases';
 	var exceptions = require('../../utils/exceptions').exceptions;
 
-	registerMapping(uri + '/{databaseName: [a-zA-Z0-9\\-\\.]+}', {
+	registerMapping(uri + '/{databaseName: [a-zA-Z0-9\\-\\.\\_]+}', {
 		'GET': doGet
 	});
 

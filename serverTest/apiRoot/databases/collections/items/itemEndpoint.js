@@ -7,7 +7,7 @@
 	var exceptions = require('../../../../utils/exceptions').exceptions;
 	var utils = require('../../utils').utils;
 
-	registerMapping(uri + '/{databaseName: [a-zA-Z0-9\\-\\.]+}' + uriSub + '/{collectionName: [a-zA-Z0-9\\-\\.]+}' + uriSubSub + '/{itemId: [a-zA-Z0-9\\-\\.]+}', {
+	registerMapping(uri + '/{databaseName: [a-zA-Z0-9\\-\\.\\_]+}' + uriSub + '/{collectionName: [a-zA-Z0-9\\-\\.\\_]+}' + uriSubSub + '/{itemId: [a-zA-Z0-9\\-\\.\\_]+}', {
 		'GET': doGet,
 		'DELETE': doDelete,
 		'PUT': doPut,

@@ -5,7 +5,7 @@
 	var uriSub = '/collections';
 	var exceptions = require('../../../utils/exceptions').exceptions;
 
-	registerMapping(uri + '/{databaseName: [a-zA-Z0-9\\-\\.]+}' + uriSub + '/{collectionName: [a-zA-Z0-9\\-\\.]+}', {
+	registerMapping(uri + '/{databaseName: [a-zA-Z0-9\\-\\.\\_]+}' + uriSub + '/{collectionName: [a-zA-Z0-9\\-\\.\\_]+}', {
 		'GET': doGet
 	});
 
